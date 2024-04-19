@@ -1,0 +1,24 @@
+{
+    "name": "MQTT Server and Client",
+    "dockerFile": "Dockerfile", // Path to your Dockerfile
+    "customizations":{
+      "vscode": {
+        "extensions": [
+          "ms-vscode.cpptools", // C/C++ extension for VSCode
+          "ms-python.python",
+          "cschlosser.doxdocgen",
+          "jbenden.c-cpp-flylint",
+          "ms-vscode.makefile-tools"
+        ],
+        "settings": {
+          "terminal.integrated.shell.linux": "/bin/bash",
+          "notebook.file.autoSave": "afterDelay",
+          "notebook.file.autoSaveDelay": 1000
+  
+        }
+      }
+    }
+    // "postCreateCommand": "pip3 install jupyter",
+    // "runArgs": ["--user", "vscode", "--privileged"],
+    // "workspaceMount": "source=/workspace,destination=/workspace,type=bind,consistency=cached"
+  }
