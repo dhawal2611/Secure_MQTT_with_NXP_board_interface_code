@@ -5,5 +5,13 @@ FROM ubuntu:latest
 RUN apt-get update && \
     apt-get install -y wget && \
     apt-get install -y git \ 
-    build-essential
+    build-essential \
+    mosquitto \
+    mosquitto-clients \
+    openssl \
+    libmosquitto-dev
+
+EXPOSE 1883
+
+EXPOSE 8883
 
