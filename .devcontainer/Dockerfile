@@ -5,5 +5,12 @@ FROM ubuntu:latest
 RUN apt-get update && \
     apt-get install -y wget && \
     apt-get install -y git \ 
-    build-essential
+    build-essential \
+    openssl \
+    vim \
+    xsltproc \
+    cmake libssl-dev \
+    libwebsockets-dev \
+    docbook-xsl
+
 
