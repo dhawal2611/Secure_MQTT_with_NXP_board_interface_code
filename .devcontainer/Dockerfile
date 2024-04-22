@@ -9,7 +9,7 @@ RUN apt-get update && \
     xsltproc \
     cmake libssl-dev \
     libwebsockets-dev \
-    docbook-xsl
+    docbook-xsl \
     vim \
     mosquitto \
     mosquitto-clients \
