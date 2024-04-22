@@ -6,6 +6,11 @@ RUN apt-get update && \
     apt-get install -y wget && \
     apt-get install -y git \ 
     build-essential \
+    xsltproc \
+    cmake libssl-dev \
+    libwebsockets-dev \
+    docbook-xsl
+    vim \
     mosquitto \
     mosquitto-clients \
     openssl \
