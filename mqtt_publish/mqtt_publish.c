@@ -13,7 +13,7 @@ bool clean_session = true;
 char *CA_CERT = "/workspaces/test/certs/ca.crt";
 char *CLIENT_CRT = "/workspaces/test/certs/client.crt";
 char *CLIENT_KEY = "/workspaces/test/certs/client.key";
-char *MQTT_BROKER = "192.168.60.109";
+char *MQTT_BROKER = "127.0.0.1";
 char *MQTT_TOPIC = "/topic";
 
 
