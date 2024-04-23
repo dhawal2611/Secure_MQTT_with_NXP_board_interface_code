@@ -16,7 +16,7 @@ int main(){
 	}
 	printf("We are now connected to the broker!\n");
 
-	mosquitto_publish(mosq, NULL, "test/t1", 6, "Hello", 0, false);
+	mosquitto_publish(mosq, NULL, "/topic", 6, "Hello", 0, false);
 
 	mosquitto_disconnect(mosq);
 	mosquitto_destroy(mosq);
