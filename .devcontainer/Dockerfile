@@ -14,7 +14,8 @@ RUN apt-get update && \
     mosquitto \
     mosquitto-clients \
     openssl \
-    libmosquitto-dev
+    libmosquitto-dev \
+    net-tools
 
 EXPOSE 1883
 
