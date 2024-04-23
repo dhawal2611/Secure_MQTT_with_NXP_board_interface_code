@@ -32,7 +32,7 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "detail": "-lm flag needed for math.h."
+            "detail": "-lmosquitto library included."
         }
 
     ],
