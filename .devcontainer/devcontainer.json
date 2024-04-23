@@ -1,6 +1,9 @@
 {
     "name": "MQTT Server and Client",
     "dockerFile": "Dockerfile", // Path to your Dockerfile
+    "runArgs": [
+      "--network=host"
+  ],
     "customizations":{
       "vscode": {
         "extensions": [
