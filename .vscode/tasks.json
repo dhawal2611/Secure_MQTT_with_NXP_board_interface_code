@@ -1,6 +1,40 @@
 {
     "tasks": [
-       
+        {
+            "label": "Run Program",
+            "type": "shell",
+            "command": "cd ${fileDirname}/build && ./${fileBasenameNoExtension}.out",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "options": {
+                "externalTerminal": true
+            },
+            "detail": "without any arguments passed"
+        },
+        {
+            "label": "Build C File",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/build/${fileBasenameNoExtension}.out",
+                "-lmosquitto"
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "-lm flag needed for math.h."
+        }
+
     ],
     "version": "2.0.0"
 }

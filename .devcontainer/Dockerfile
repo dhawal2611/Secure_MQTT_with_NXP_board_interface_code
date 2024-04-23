@@ -17,7 +17,7 @@ RUN apt-get update && \
     libmosquitto-dev \
     net-tools
 
-RUN mosquitto -c /workspaces/test/conf/mosquitto_c.conf  -v
+#RUN mosquitto -c /workspaces/test/conf/mosquitto_c.conf  -v
 
 EXPOSE 1883
 
