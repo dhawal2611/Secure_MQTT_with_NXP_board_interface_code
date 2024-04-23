@@ -7,11 +7,14 @@
             "group": "build",
             "presentation": {
                 "reveal": "always",
-                "panel": "new"
+                "panel": "new",
+                "clear": true,
+                "showReuseMessage": false,
+                //"newTerminal": true
             },
-            "options": {
-                "externalTerminal": true
-            },
+            // "options": {
+            //     "externalTerminal":
+            // },
             "detail": "without any arguments passed"
         },
         {
@@ -33,6 +36,16 @@
                 "$gcc"
             ],
             "detail": "-lmosquitto library included."
+        },
+        {
+            "label": "Start Mosquitto Server",
+            "type": "process",
+            "options": {
+                "cwd": "${workspaceFolder}/mqtt_server"
+            },
+            
+            "command": "./start_server.sh",
+
         }
 
     ],
