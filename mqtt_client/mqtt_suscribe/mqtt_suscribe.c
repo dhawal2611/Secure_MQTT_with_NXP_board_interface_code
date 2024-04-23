@@ -59,7 +59,7 @@ int main() {
 	mosquitto_log_callback_set(mosq, mosq_log_callback);
 
 	rc = mosquitto_tls_set(mosq, CA_CERT, NULL, CLIENT_CRT, CLIENT_KEY, NULL);
-	rc = mosquitto_tls_opts_set(mosq, 1, NULL, NULL);
+	rc = mosquitto_tls_opts_set(mosq, 1, "tlsv1.2", NULL);
 	rc = mosquitto_connect(mosq, MQTT_BROKER, MQTT_PORT, keepalive);
 	
 	//rc = mosquitto_connect(mosq, "localhost", 1883, 10);
