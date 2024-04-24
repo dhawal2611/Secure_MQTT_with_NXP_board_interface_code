@@ -50,7 +50,7 @@
         {
             "label": "Create Certificates",
             "type": "shell",
-            "command": "python",
+            "command": "python3",
             "options": {
                 "cwd": "${workspaceFolder}/mqtt_server"
             },
