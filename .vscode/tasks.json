@@ -50,13 +50,10 @@
         {
             "label": "Create Certificates",
             "type": "shell",
-            "command": "python3",
+            "command": "chmod +x create_certs.sh && ./create_certs.sh",
             "options": {
                 "cwd": "${workspaceFolder}/mqtt_server"
-            },
-            "args": [
-                "create_certs.py"
-            ]
+            }
         }
 
     ],
