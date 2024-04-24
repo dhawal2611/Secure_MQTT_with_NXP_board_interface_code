@@ -15,7 +15,9 @@ RUN apt-get update && \
     mosquitto-clients \
     openssl \
     libmosquitto-dev \
-    net-tools
+    net-tools \
+    python3 \
+    python3-pip
 
 #RUN mosquitto -c /workspaces/test/conf/mosquitto_c.conf  -v
 

@@ -39,13 +39,24 @@
         },
         {
             "label": "Start Mosquitto Server",
-            "type": "process",
+            "type": "shell",
             "options": {
                 "cwd": "${workspaceFolder}/mqtt_server"
             },
             
-            "command": "./start_server.sh",
+            "command": "chmod +x start_server.sh && ./start_server.sh",
 
+        },
+        {
+            "label": "Create Certificates",
+            "type": "shell",
+            "command": "python",
+            "options": {
+                "cwd": "${workspaceFolder}/mqtt_server"
+            },
+            "args": [
+                "create_certs.py"
+            ]
         }
 
     ],
