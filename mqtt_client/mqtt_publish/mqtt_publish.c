@@ -13,8 +13,8 @@ bool clean_session = true;
 char *CA_CERT = "../../../mqtt_server/certs/ca.crt";
 char *CLIENT_CRT = "../../../mqtt_server/certs/client.crt";
 char *CLIENT_KEY = "../../../mqtt_server/certs/client.key";
-char *MQTT_BROKER = "127.0.0.1";
-char *MQTT_TOPIC = "/topic";
+char *MQTT_BROKER = "192.168.1.16";
+char *MQTT_TOPIC = "lwip_topic/2";
 
 
 void mosq_log_callback(struct mosquitto *mosq, void *userdata, int level, const char *str)
@@ -60,8 +60,9 @@ int main(int argc, char *argv[])
 	if (mqtt_setup() == 0)
 	{
 		printf("Setup done, connected to broker. \n");
-
-		rv = mosquitto_publish(mosq, NULL, MQTT_TOPIC, 11, "hello world", 0, false);
+		char buffer[10];
+		sprintf(buffer,"%02X", 0x09);
+		rv = mosquitto_publish(mosq, NULL, MQTT_TOPIC, 2, buffer, 0, false);
 
 		if (rv != 0)
 		{
