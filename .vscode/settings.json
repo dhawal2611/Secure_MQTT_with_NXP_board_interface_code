@@ -1,6 +1,13 @@
 {
     "C_Cpp.errorSquiggles": "enabled",
     "files.associations": {
-        "mosquitto.h": "c"
+        "mosquitto.h": "c",
+        "stdio.h": "c",
+        "unistd.h": "c",
+        "stdlib.h": "c",
+        "string.h": "c",
+        "in.h": "c",
+        "inet.h": "c",
+        "ioctl.h": "c"
     }
 }
