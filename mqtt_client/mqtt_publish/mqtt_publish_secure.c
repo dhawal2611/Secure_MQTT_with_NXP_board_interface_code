@@ -10,9 +10,9 @@ int rv;
 int MQTT_PORT = 8883;
 int keepalive = 60;
 bool clean_session = true;
-char *CA_CERT = "../../../mqtt_server/certs/ca.crt";
-char *CLIENT_CRT = "../../../mqtt_server/certs/client.crt";
-char *CLIENT_KEY = "../../../mqtt_server/certs/client.key";
+char *CA_CERT = "../../../mqtt_broker/certs/ca.crt";
+char *CLIENT_CRT = "../../../mqtt_broker/certs/client.crt";
+char *CLIENT_KEY = "../../../mqtt_broker/certs/client.key";
 char *MQTT_BROKER = "192.168.1.16";
 char *MQTT_TOPIC = "lwip_topic/2";
 

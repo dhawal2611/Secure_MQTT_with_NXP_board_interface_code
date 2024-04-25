@@ -18,6 +18,19 @@
             "detail": "without any arguments passed"
         },
         {
+            "label": "Create a Build folder",
+            "type": "shell",
+            "command": "mkdir",
+            "args": [
+                "-p",
+                "build",
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+        },
+        {
             "label": "Build C File",
             "type": "shell",
             "command": "gcc",
@@ -41,7 +54,7 @@
             "label": "Start Mosquitto Server",
             "type": "shell",
             "options": {
-                "cwd": "${workspaceFolder}/mqtt_server"
+                "cwd": "${workspaceFolder}/mqtt_broker"
             },
             
             "command": "chmod +x start_server.sh && ./start_server.sh",
@@ -52,7 +65,7 @@
             "type": "shell",
             "command": "chmod +x create_certs.sh && ./create_certs.sh",
             "options": {
-                "cwd": "${workspaceFolder}/mqtt_server"
+                "cwd": "${workspaceFolder}/mqtt_broker"
             }
         }
 
