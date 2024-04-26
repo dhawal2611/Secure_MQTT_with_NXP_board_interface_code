@@ -8,14 +8,23 @@
 
 * OR To create SSL-TSL certificates automatically
 <<<<<<< HEAD
+<<<<<<< HEAD
     * sh create_certs.sh
     * Note: Make sure use different "common name" wherever required.
     * Note: Common name while creating server certificate use system IP address on which broker is running.
+=======
+    ``` sh create_certs.sh ```
+
+> [!NOTE]
+> Make sure use different "common name" wherever required.
+> Common name while creating server certificate use system IP address on which broker is running.
+>>>>>>> 464bbb7 (Update README files)
 
 * To start the broker use below command
     * sh start_server.sh
 
 - Command to start mosquitto broker manually 
+<<<<<<< HEAD
     ```
     mosquitto -c <Path to mosquitto1.conf file> -v
     ```
@@ -32,6 +41,9 @@
 - Command to start mosquitto broker manually 
     ``` mosquitto -c <Path to mosquitto_c.conf file> -v ```
 >>>>>>> 9f7ab2e (Update README files)
+=======
+    ``` mosquitto -c <Path to mosquitto_c.conf file> -v ```
+>>>>>>> 464bbb7 (Update README files)
 
 
 
