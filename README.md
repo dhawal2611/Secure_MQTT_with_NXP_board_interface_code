@@ -13,9 +13,11 @@
 > Using below commands for VScode only.
 
 - Commands to create certificate and start mosquitto server for **VScode** only.
-    - Click  Ctrl+Shift+b
+    - Click  Ctrl+Shift+p
+    - Type "**Run Task**"
     - Select option "Create Certificates"
-    - Click  Ctrl+Shift+b
+    - Click  Ctrl+Shift+p
+    - Type "**Run Task**"
     - Select option "Start Mosquitto Server"
 
 - Commands to Compile and Run code for **VScode** only.
