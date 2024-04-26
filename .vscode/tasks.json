@@ -39,7 +39,8 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/build/${fileBasenameNoExtension}.out",
-                "-lmosquitto"
+                "-lmosquitto",
+                "-lcjson"
             ],
             "group": "build",
             "options": {

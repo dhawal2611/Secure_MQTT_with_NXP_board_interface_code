@@ -21,6 +21,16 @@ RUN apt-get update && \
 
 #RUN mosquitto -c /workspaces/test/conf/mosquitto_c.conf  -v
 
+
+RUN git clone https://github.com/DaveGamble/cJSON.git
+
+RUN cd cJSON && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    cmake --build . && \
+    make install
+
 EXPOSE 1883
 
 EXPOSE 8883
