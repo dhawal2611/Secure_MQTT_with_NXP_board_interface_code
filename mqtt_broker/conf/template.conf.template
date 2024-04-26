@@ -1,6 +1,6 @@
-#Use for Docker based systems
-
+#For Docker based system use below statement or else hide this using #
 allow_anonymous true
+
 listener 1883
 listener 8883
 # cafile /workspaces/test/mqtt_server/certs/ca.crt
