@@ -12,8 +12,8 @@ bool clean_session = true;
 char *CA_CERT = "../../../mqtt_broker/certs/ca.crt";
 char *CLIENT_CRT = "../../../mqtt_broker/certs/client.crt";
 char *CLIENT_KEY = "../../../mqtt_broker/certs/client.key";
-char *MQTT_BROKER = "192.168.1.16";
-char *MQTT_TOPIC = "config_data";
+char *MQTT_BROKER = "172.17.0.1";
+char *MQTT_TOPIC = "/test";
 
 
 void on_connect(struct mosquitto *mosq, void *obj, int rc) {
