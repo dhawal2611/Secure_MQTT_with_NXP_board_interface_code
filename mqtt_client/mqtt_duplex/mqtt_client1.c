@@ -53,13 +53,58 @@ uint8_t u8GetIP() {
 
 void message_callback(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message) {
 
+    // if(message->payloadlen){
+    //     printf("%s %.*s\n", message->topic, (int)message->payloadlen, (char *)message->payload);
+    //     strncpy (data, (char *)message->payload, (int)message->payloadlen);
+    //     flag = 1;
+    // } else {
+    //     printf("%s (null)\n", message->topic);
+    // }
     cJSON *config_data = cJSON_Parse((char*)message->payload);
 
     cJSON *fw_version_data = cJSON_GetObjectItem(config_data, "fw_version");
-    cJSON *serial_no_data = cJSON_GetObjectItem(config_data, "serial_number");
+    if(fw_version_data != NULL)
+    {
+        printf("\r\nreceived FW Version: %02x\r\n", fw_version_data->valueint);
 
-    printf("\r\nreceived FW Version: %02x\r\n", fw_version_data->valueint);
-    printf("\r\nreceived FW Version: %s\r\n", serial_no_data->valuestring);
+    }
+    cJSON *serial_no_data = cJSON_GetObjectItem(config_data, "serial_number");
+    if(serial_no_data != NULL)
+    {
+        printf("\r\nreceived Serial No: %s\r\n", serial_no_data->valuestring);
+
+    }
+    cJSON *usb_mode_data = cJSON_GetObjectItem(config_data, "usb_mode");
+    if(usb_mode_data != NULL)
+    {
+        switch (usb_mode_data->valueint)
+        {
+        case 0:
+            printf("\r\nreceived USB Mode: USB_DeviceStateDisable\r\n");
+            break;
+
+        case 1:
+            printf("\r\nreceived USB Mode: USB_DeviceStateDownstream\r\n");
+            break;
+
+        case 2:
+            printf("\r\nreceived USB Mode: USB_DeviceStateDiagnostics\r\n");
+            break;
+
+        case 3:
+            printf("\r\nreceived USB Mode: USB_HostStateUpstream\r\n");
+            break;
+        
+        default:
+            printf("\r\nreceived USB Mode: UNKNOWN\r\n");
+            break;
+        }
+       
+    }
+
+    
+    
+    
 
     cJSON_Delete(config_data);
 }
@@ -135,6 +180,7 @@ int main(int argc, char *argv[]) {
             {
                 cJSON_AddBoolToObject(req_config_data,"req_fw_version", true);
                 cJSON_AddBoolToObject(req_config_data,"req_serial_no", true);
+                cJSON_AddBoolToObject(req_config_data,"req_usb_mode", true);
             }
             char* payload = cJSON_Print(req_config_data);
             // Call function to request configuration data
