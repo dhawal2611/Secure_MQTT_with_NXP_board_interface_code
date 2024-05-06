@@ -53,6 +53,7 @@
         },
         {
             "label": "Start Mosquitto Server",
+            "detail": "On both secure and unsecure ports",
             "type": "shell",
             "options": {
                 "cwd": "${workspaceFolder}/mqtt_broker"
@@ -63,11 +64,17 @@
         },
         {
             "label": "Create Certificates",
+            "detail": "for the current Host Machine",
             "type": "shell",
             "command": "chmod +x create_certs.sh && ./create_certs.sh",
             "options": {
                 "cwd": "${workspaceFolder}/mqtt_broker"
             }
+        },
+        {
+            "label": "Run NXP MQTT Client",
+            "detail": "To get the configuration from the RMM Device",
+            "command": "/workspaces/test/mqtt_client/mqtt_duplex/build/mqtt_client1.out"
         }
 
     ],
