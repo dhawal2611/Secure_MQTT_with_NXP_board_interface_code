@@ -18,7 +18,7 @@
 struct mosquitto *mosq = NULL;
 char *topic = NULL;
 int rv;
-int MQTT_PORT = 8883;
+int MQTT_PORT = 1883;
 int keepalive = 60;
 bool clean_session = true;
 char *CA_CERT = "../../../mqtt_broker/certs/ca.crt";
@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    mosquitto_tls_set(mosq, CA_CERT, NULL, CLIENT_CRT, CLIENT_KEY, NULL);
+    //mosquitto_tls_set(mosq, CA_CERT, NULL, CLIENT_CRT, CLIENT_KEY, NULL);
 
     mosquitto_message_callback_set(mosq, message_callback);
 
