@@ -2,6 +2,8 @@
 #include <mosquitto.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -10,6 +12,8 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 #include <cjson/cJSON.h>
+
+#define BUFFER_SIZE 64
 
 struct mosquitto *mosq = NULL;
 char *topic = NULL;
@@ -20,7 +24,7 @@ bool clean_session = true;
 char *CA_CERT = "../../../mqtt_broker/certs/ca.crt";
 char *CLIENT_CRT = "../../../mqtt_broker/certs/client.crt";
 char *CLIENT_KEY = "../../../mqtt_broker/certs/client.key";
-char MQTT_BROKER[64] = "192.168.1.16"; // IP address of the system on which broker is running
+char MQTT_BROKER[BUFFER_SIZE] = {0}; // IP address of the system on which broker is running
 char *MQTT_TOPIC1 = "req_config_data";
 char *MQTT_TOPIC2 = "config_data";
 
@@ -30,10 +34,28 @@ char *MQTT_TOPIC2 = "config_data";
 char data[1024];
 uint8_t flag = 0;
 
+bool is_zero_initialized(const char *buffer, size_t size) 
+{
+    for (size_t i = 0; i < size; i++) 
+    {
+        if (buffer[i] != '\0') 
+        {
+            return false;
+        }
+    }
+
+    if(!strcmp(buffer, "0.0.0.0"))
+    {
+        return true;
+    }
+    return true;
+}
+
 uint8_t u8GetIP() {
     int n;
     struct ifreq ifr;
-    char interface_name[] = "enp1s0";
+    char interface_name[] = "wlxe4fac4521afb";
+    //char interface_name[] = "enp1s0";
  
     n = socket(AF_INET, SOCK_DGRAM, 0);
     //Type of address to retrieve - IPv4 IP address
@@ -125,9 +147,23 @@ int main(int argc, char *argv[]) {
     struct mosquitto *mosq;
     int rc;
 
-    if(u8GetIP() == -1) {
+    if(u8GetIP() == -1) 
+    {
         printf("Invalid Interface name\n");
         return 0;
+    }
+    if (is_zero_initialized(MQTT_BROKER, BUFFER_SIZE))
+    {
+        memset(MQTT_BROKER, 0x00, BUFFER_SIZE);
+        // Take the input Manually
+        printf("Enter Server Address: ");
+        scanf("%63s",MQTT_BROKER);
+        printf("You entered: %s\n", MQTT_BROKER);
+        
+    }
+    else
+    {
+        printf("Successfully acquired the Broker Address!\n");
     }
     printf("IP is successfully\n");
 
@@ -194,6 +230,7 @@ int main(int argc, char *argv[]) {
         case 2:
             printf("Exiting...\n");
             // Call function to exit
+            exit(0);
             break;
         default:
             printf("Invalid choice!\n");

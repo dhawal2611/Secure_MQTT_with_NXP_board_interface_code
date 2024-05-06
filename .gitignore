@@ -1,3 +1,3 @@
 mqtt_client/mqtt_publish/build/
-mqtt_client/mqtt_duplex/build/
+#mqtt_client/mqtt_duplex/build/
 mqtt_client/mqtt_subscribe/build
