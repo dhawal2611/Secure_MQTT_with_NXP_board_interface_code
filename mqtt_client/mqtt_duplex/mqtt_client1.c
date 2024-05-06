@@ -68,7 +68,7 @@ uint8_t u8GetIP() {
     strncpy(ifr.ifr_name , interface_name , IFNAMSIZ - 1);
     ioctl(n, SIOCGIFADDR, &ifr);
     close(n);
-    printf("IP Address is %s - %s\n" , interface_name , inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr )->sin_addr));
+    printf("IP Address of Interface %s - %s\n" , interface_name , inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr )->sin_addr));
     if(strstr(inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr )->sin_addr), "0.0.0.0") != NULL) {
         return -1;
     }
