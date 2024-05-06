@@ -73,8 +73,10 @@
         },
         {
             "label": "Run NXP MQTT Client",
+            "type": "shell",
             "detail": "To get the configuration from the RMM Device",
-            "command": "/workspaces/test/mqtt_client/mqtt_duplex/build/mqtt_client1.out"
+            "command": "cd ${workspaceFolder}/mqtt_client/mqtt_duplex/build && ./mqtt_client1.out"
+
         }
 
     ],

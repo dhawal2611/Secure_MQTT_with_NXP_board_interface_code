@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <ctype.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -13,12 +14,14 @@
 #include <arpa/inet.h>
 #include <cjson/cJSON.h>
 
+
+#define MQTT_DEBUG  0
 #define BUFFER_SIZE 64
 
 struct mosquitto *mosq = NULL;
 char *topic = NULL;
 int rv;
-int MQTT_PORT = 1883;
+int MQTT_PORT = 0;
 int keepalive = 60;
 bool clean_session = true;
 char *CA_CERT = "../../../mqtt_broker/certs/ca.crt";
@@ -27,6 +30,7 @@ char *CLIENT_KEY = "../../../mqtt_broker/certs/client.key";
 char MQTT_BROKER[BUFFER_SIZE] = {0}; // IP address of the system on which broker is running
 char *MQTT_TOPIC1 = "req_config_data";
 char *MQTT_TOPIC2 = "config_data";
+bool tls_flag = false;
 
 #define MQTT_QOS 1
 #define MQTT_RETAIN 0
@@ -75,60 +79,64 @@ uint8_t u8GetIP() {
 
 void message_callback(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message) {
 
-    // if(message->payloadlen){
-    //     printf("%s %.*s\n", message->topic, (int)message->payloadlen, (char *)message->payload);
-    //     strncpy (data, (char *)message->payload, (int)message->payloadlen);
-    //     flag = 1;
-    // } else {
-    //     printf("%s (null)\n", message->topic);
-    // }
+#if MQTT_DEBUG
+    if(message->payloadlen){
+        printf("%s %.*s\n", message->topic, (int)message->payloadlen, (char *)message->payload);
+        strncpy (data, (char *)message->payload, (int)message->payloadlen);
+        flag = 1;
+    } else {
+        printf("%s (null)\n", message->topic);
+    }
+#endif
+    printf("\r\nresponse: \r\n");
     cJSON *config_data = cJSON_Parse((char*)message->payload);
 
-    cJSON *fw_version_data = cJSON_GetObjectItem(config_data, "fw_version");
-    if(fw_version_data != NULL)
+    if(config_data != NULL)
     {
-        printf("\r\nreceived FW Version: %02x\r\n", fw_version_data->valueint);
-
-    }
-    cJSON *serial_no_data = cJSON_GetObjectItem(config_data, "serial_number");
-    if(serial_no_data != NULL)
-    {
-        printf("\r\nreceived Serial No: %s\r\n", serial_no_data->valuestring);
-
-    }
-    cJSON *usb_mode_data = cJSON_GetObjectItem(config_data, "usb_mode");
-    if(usb_mode_data != NULL)
-    {
-        switch (usb_mode_data->valueint)
+        cJSON *fw_version_data = cJSON_GetObjectItem(config_data, "fw_version");
+        if (fw_version_data != NULL)
         {
-        case 0:
-            printf("\r\nreceived USB Mode: USB_DeviceStateDisable\r\n");
-            break;
-
-        case 1:
-            printf("\r\nreceived USB Mode: USB_DeviceStateDownstream\r\n");
-            break;
-
-        case 2:
-            printf("\r\nreceived USB Mode: USB_DeviceStateDiagnostics\r\n");
-            break;
-
-        case 3:
-            printf("\r\nreceived USB Mode: USB_HostStateUpstream\r\n");
-            break;
-        
-        default:
-            printf("\r\nreceived USB Mode: UNKNOWN\r\n");
-            break;
+            printf("\r\nreceived FW Version: %02x\r\n", fw_version_data->valueint);
         }
-       
+        cJSON *serial_no_data = cJSON_GetObjectItem(config_data, "serial_number");
+        if (serial_no_data != NULL)
+        {
+            printf("\r\nreceived Serial No: %s\r\n", serial_no_data->valuestring);
+        }
+        cJSON *usb_mode_data = cJSON_GetObjectItem(config_data, "usb_mode");
+        if (usb_mode_data != NULL)
+        {
+            switch (usb_mode_data->valueint)
+            {
+            case 0:
+                printf("\r\nreceived USB Mode: USB_DeviceStateDisable\r\n");
+                break;
+
+            case 1:
+                printf("\r\nreceived USB Mode: USB_DeviceStateDownstream\r\n");
+                break;
+
+            case 2:
+                printf("\r\nreceived USB Mode: USB_DeviceStateDiagnostics\r\n");
+                break;
+
+            case 3:
+                printf("\r\nreceived USB Mode: USB_HostStateUpstream\r\n");
+                break;
+
+            default:
+                printf("\r\nreceived USB Mode: UNKNOWN\r\n");
+                break;
+            }
+        }
+
+        cJSON_Delete(config_data);
     }
-
-    
-    
-    
-
-    cJSON_Delete(config_data);
+    else
+    {
+        //No response received
+        printf("Invalid response received!\n");
+    }
 }
 
 void display_menu() 
@@ -143,28 +151,11 @@ void display_menu()
     printf("2. Exit\n");
 }
 
-int main(int argc, char *argv[]) {
+
+int mqtt_connect()
+{
     struct mosquitto *mosq;
     int rc;
-
-    if(u8GetIP() == -1) 
-    {
-        printf("Invalid Interface name\n");
-        return 0;
-    }
-    if (is_zero_initialized(MQTT_BROKER, BUFFER_SIZE))
-    {
-        memset(MQTT_BROKER, 0x00, BUFFER_SIZE);
-        // Take the input Manually
-        printf("Enter Server Address: ");
-        scanf("%63s",MQTT_BROKER);
-        printf("You entered: %s\n", MQTT_BROKER);
-        
-    }
-    else
-    {
-        printf("Successfully acquired the Broker Address!\n");
-    }
     printf("IP is successfully\n");
 
     mosquitto_lib_init();
@@ -175,7 +166,10 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    //mosquitto_tls_set(mosq, CA_CERT, NULL, CLIENT_CRT, CLIENT_KEY, NULL);
+    if(tls_flag == true)
+    {
+        mosquitto_tls_set(mosq, CA_CERT, NULL, CLIENT_CRT, CLIENT_KEY, NULL);
+    }
 
     mosquitto_message_callback_set(mosq, message_callback);
 
@@ -191,9 +185,127 @@ int main(int argc, char *argv[]) {
 
     mosquitto_loop_start(mosq);
 
-    // Publish a message
-    //char payload[] = "Hello MQTT";
-    //mosquitto_publish(mosq, NULL, MQTT_TOPIC2, sizeof(payload), payload, MQTT_QOS, MQTT_RETAIN);
+}
+
+int get_port()
+{
+    char input[2];
+    printf("Select MQTT Port: (1 or 2)\n");
+    while(1)
+    {
+        printf("1. Secure MQTT Port (8883)\n");
+        printf("2. Unsecure MQTT Port (1883)\n");
+        if (scanf("%1s", input) != 1) { // Read a single character
+            printf("Invalid input. Please try again.\n");
+            while (getchar() != '\n'); // Clear the input buffer
+            continue;
+        }
+        
+        
+        if (strcmp(input, "1") == 0 || strcmp(input, "2") == 0) {
+            break; // Valid input, exit the loop
+        } else {
+            printf("Invalid input. Please try again.\n");
+        }
+    }
+
+    if(input[0] = '1')
+    {
+        //Secure MQTT
+        MQTT_PORT = 8883;
+        tls_flag = true;
+        if(mqtt_connect() == 1)
+        {
+            return 1;
+        }
+    }
+    else if(input[0] == '2')
+    {
+        //Unsecure MQTT
+        MQTT_PORT = 1883;
+        tls_flag = false;
+        if(mqtt_connect() == 1)
+        {
+            return 1;
+        }
+    }
+
+}
+
+int main(int argc, char *argv[]) {
+    
+    char input[2];
+
+    //Get the MQTT Broker Address and Port
+    printf("Auto Getting the MQTT Broker Address... \n");
+
+    if(u8GetIP() == -1) 
+    {
+        printf("Invalid Interface name\n");
+        //return 0;
+    }
+    while(1)
+    {
+        printf("Is this MQTT Broker Address Correct? : %s (y/n)\t", MQTT_BROKER);
+        if (scanf("%1s", input) != 1) { // Read a single character
+            printf("Invalid input. Please try again.\n");
+            while (getchar() != '\n'); // Clear the input buffer
+            continue;
+        }
+        // Convert input to lowercase
+        input[0] = tolower(input[0]);
+        
+        if (strcmp(input, "y") == 0 || strcmp(input, "n") == 0) {
+            break; // Valid input, exit the loop
+        } else {
+            printf("Invalid input. Please try again.\n");
+        }
+    }
+
+    if(input[0] == 'y')
+    {
+        //Yes, success in auto getting the address
+        if(get_port() == 1)
+        {
+            return 1;
+        }
+
+    }
+    else if(input[0] == 'n')
+    {
+        while (1)
+        {
+            // Ask the user to manually enter the addr
+            memset(MQTT_BROKER, 0x00, BUFFER_SIZE);
+            printf("Enter Server Address: ");
+            scanf("%63s", MQTT_BROKER);
+            printf("Is this MQTT Broker Address Correct? : %s (y/n)\t", MQTT_BROKER);
+            if (scanf("%1s", input) != 1)
+            { // Read a single character
+                printf("Invalid input. Please try again.\n");
+                while (getchar() != '\n')
+                    ; // Clear the input buffer
+                continue;
+            }
+            // Convert input to lowercase
+            input[0] = tolower(input[0]);
+
+            if (strcmp(input, "y") == 0 || strcmp(input, "n") == 0)
+            {
+                break; // Valid input, exit the loop
+            }
+            else
+            {
+                printf("Invalid input. Please try again.\n");
+            }
+        }
+
+        if (get_port() == 1)
+        {
+            return 1;
+        }
+    }
+    
     display_menu();
     printf("Enter your choice: ");
     // Wait for messages to arrive
@@ -224,7 +336,6 @@ int main(int argc, char *argv[]) {
             mosquitto_publish(mosq, NULL, MQTT_TOPIC1, strlen(payload), payload, MQTT_QOS, MQTT_RETAIN);
             flag = 0;
             cJSON_Delete(req_config_data);
-            printf("\r\nresponse: \r\n");
 
             break;
         case 2:
