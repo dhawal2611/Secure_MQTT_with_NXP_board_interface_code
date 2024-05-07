@@ -11,47 +11,61 @@ create_directory() {
 }
 
 create_the_certificate_authority() {
-    certs_directory=$1
-    command="openssl genrsa -out ca.key 2048"
-    $command
-    echo "RSA key generated successfully at '$certs_directory'."
+    # Get the output of `hostname -I`
+    output=$(hostname -I)
 
-    echo -e "\033[1;31m Please enter a unique Common Name. Other fields such as Country Name, State or Province Name are optional. To skip, simply press Enter.\033[0m"
-    cert_command="openssl req -new -x509 -days 3650 -key ca.key -out ca.crt"
-    $cert_command
-    echo "Self-signed certificate generated successfully at '$certs_directory'."
+    # Use grep with a regular expression to extract the IPv4 address starting with "192.168."
+    ipv4_address=$(echo "$output" | grep -oE '192\.168\.[0-9]+\.[0-9]+')
+
+    certs_directory=$1
+
+    # Define the openssl command as a string
+    cert_command="openssl req -new -x509 -days 400 -extensions v3_ca -subj '/C=IN/L=Some City/CN=$ipv4_address' -keyout mosquitto-certificate-authority.key -out mosquitto-certificate-authority.crt"
+
+    # Execute the openssl command
+    eval "$cert_command"
 }
 
 create_the_server_certificates() {
+    # Get the output of `hostname -I`
+    output=$(hostname -I)
+
+    # Use grep with a regular expression to extract the IPv4 address starting with "192.168."
+    ipv4_address=$(echo "$output" | grep -oE '192\.168\.[0-9]+\.[0-9]+')
     certs_directory=$1
-    command="openssl genrsa -out server.key 2048"
-    $command
+    #command="openssl genrsa -out server.key 2048"
+    #$command
+    command="openssl genrsa -out mqtt-server.key 2048"
+    eval "$command"
     echo "Server private key generated successfully at '$certs_directory'."
 
-    echo -e "\033[1;31m Please enter the IP address or hostname of your MQTT server as the common name.\033[0m"
-    echo -e "\033[1;31m Other fields such as Country Name, State or Province Name are optional. To skip, simply press Enter.\033[0m"
-    cert_command="openssl req -new -key server.key -out server.csr"
-    $cert_command
+    cert_command="openssl req -new -out mqtt-server.csr -key mqtt-server.key -subj '/C=FI/L=Some City/CN=$ipv4_address'"
+    eval "$cert_command"
     echo "Self-signed certificate generated successfully at '$certs_directory'."
 
-    sign_command="openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 3650"
-    $sign_command
+    sign_command="openssl x509 -req -days 367 -CA    mosquitto-certificate-authority.crt -CAkey mosquitto-certificate-authority.key -CAcreateserial -in  mqtt-server.csr -out mqtt-server.crt -extfile <(printf \"subjectAltName=IP:$ipv4_address\")"
+    eval "$sign_command"
 }
 
 create_the_client_certificates() {
     certs_directory=$1
-    command="openssl genrsa -out client.key 2048"
-    $command
+    command="openssl genrsa -out listener03-client.key 2048"
+    eval "$command"
     echo "Client private key generated successfully at '$certs_directory'."
 
-    echo -e "\033[1;31m Please enter a unique Common Name\033[0m"
-    echo -e "\033[1;31m Other fields such as Country Name, State or Province Name are optional. To skip, simply press Enter.\033[0m"
-    cert_command="openssl req -new -key client.key -out client.csr"
-    $cert_command
+    cert_command="openssl req -new -out listener03-client.csr -key listener03-client.key -subj '/C=FI/L=Some City/CN=test'"
+    eval "$cert_command"
     echo "Self-signed certificate generated successfully at '$certs_directory'."
 
-    sign_command="openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 3650"
-    $sign_command
+    echo "Please Enter NXP Device IP Address:"
+    read nxp_ip
+    sign_command="openssl x509 -req -days 367 -CA mosquitto-certificate-authority.crt \
+        -CAkey mosquitto-certificate-authority.key \
+        -CAcreateserial \
+        -in  listener03-client.csr \
+        -out listener03-client.crt \
+        -extfile <(printf \"subjectAltName=IP:$nxp_ip\")"
+    eval "$sign_command"
 }
 
 configure_mosquitto() {

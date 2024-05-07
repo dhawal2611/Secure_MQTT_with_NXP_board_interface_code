@@ -6,8 +6,11 @@ listener 8883
 # cafile /workspaces/test/mqtt_server/certs/ca.crt
 # certfile /workspaces/test/mqtt_server/certs/server.crt
 # keyfile /workspaces/test/mqtt_server/certs/server.key
-cafile %WORKSPACE_FOLDER%/certs/ca.crt
-certfile %WORKSPACE_FOLDER%/certs/server.crt
-keyfile %WORKSPACE_FOLDER%/certs/server.key
+#cafile %WORKSPACE_FOLDER%/certs/ca.crt
+#certfile %WORKSPACE_FOLDER%/certs/server.crt
+#keyfile %WORKSPACE_FOLDER%/certs/server.key
+cafile %WORKSPACE_FOLDER%/certs/mosquitto-certificate-authority.crt
+certfile %WORKSPACE_FOLDER%/certs/mqtt-server.crt
+keyfile %WORKSPACE_FOLDER%/certs/mqtt-server.key
 require_certificate true
 tls_version tlsv1.2
