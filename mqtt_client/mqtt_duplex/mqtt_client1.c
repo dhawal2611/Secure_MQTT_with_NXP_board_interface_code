@@ -30,7 +30,7 @@
 #define ANSI_COLOR_RED     "\x1b[31m"   /**< Ansi Color Red */
 #define ANSI_COLOR_RESET   "\x1b[0m"    /**< Ansi color reset */
 
-struct mosquitto *mosq = NULL;
+static struct mosquitto *mosq = NULL;
 char *topic = NULL;
 int rv;
 int MQTT_PORT = 0;
@@ -114,6 +114,12 @@ void _fprintfGreen(FILE *file, const char *format, ...)
     fprintf(file,RESET_COLOR);
     fflush(file);
     va_end(args);
+}
+
+void cJSON_ErrorHandler()
+{
+    _fprintfRed(stderr,"Error Creating a cJSON Object! \n");
+    exit(0);
 }
 
 
@@ -246,7 +252,6 @@ void display_menu()
 
 int mqtt_connect()
 {
-    struct mosquitto *mosq;
     int rc;
     _fprintfGreen(stdout,"IP is obtained successfully\n");
 
@@ -455,6 +460,10 @@ int main(int argc, char *argv[]) {
                 cJSON_AddBoolToObject(req_config_data,"req_serial_no", true);
                 cJSON_AddBoolToObject(req_config_data,"req_usb_mode", true);
             }
+            else
+            {
+                cJSON_ErrorHandler();
+            }
             char* payload = cJSON_Print(req_config_data);
             // Call function to request configuration data
             //printf("sending payload: %s with size: %lu", payload, strlen(payload));
@@ -472,6 +481,10 @@ int main(int argc, char *argv[]) {
                 cJSON_AddBoolToObject(req_config_data,"random_topic", true);
                 cJSON_AddBoolToObject(req_config_data,"lorem_ipsum", true);
                 cJSON_AddBoolToObject(req_config_data,"acv", true);
+            }
+            else
+            {
+                cJSON_ErrorHandler();
             }
             char* w_payload = cJSON_Print(req_w_config_data);
             // Call function to request configuration data
