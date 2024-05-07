@@ -36,9 +36,9 @@ int rv;
 int MQTT_PORT = 0;
 int keepalive = 60;
 bool clean_session = true;
-char *CA_CERT = "../../../mqtt_broker/certs/ca.crt";
-char *CLIENT_CRT = "../../../mqtt_broker/certs/client.crt";
-char *CLIENT_KEY = "../../../mqtt_broker/certs/client.key";
+char *CA_CERT = "../../../mqtt_broker/certs/mosquitto-certificate-authority.crt";
+char *CLIENT_CRT = "../../../mqtt_broker/certs/listener03-client.crt";
+char *CLIENT_KEY = "../../../mqtt_broker/certs/listener03-client.key";
 char MQTT_BROKER[BUFFER_SIZE] = {0}; // IP address of the system on which broker is running
 char *MQTT_TOPIC1 = "req_config_data";
 char *MQTT_TOPIC2 = "config_data";
@@ -478,9 +478,9 @@ int main(int argc, char *argv[]) {
         cJSON *req_w_config_data = cJSON_CreateObject();
             if(req_w_config_data != NULL)
             {
-                cJSON_AddBoolToObject(req_config_data,"random_topic", true);
-                cJSON_AddBoolToObject(req_config_data,"lorem_ipsum", true);
-                cJSON_AddBoolToObject(req_config_data,"acv", true);
+                cJSON_AddBoolToObject(req_w_config_data,"random_topic", true);
+                cJSON_AddBoolToObject(req_w_config_data,"lorem_ipsum", true);
+                cJSON_AddBoolToObject(req_w_config_data,"acv", true);
             }
             else
             {
