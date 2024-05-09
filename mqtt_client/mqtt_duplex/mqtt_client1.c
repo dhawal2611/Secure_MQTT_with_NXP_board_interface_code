@@ -45,6 +45,7 @@ char *MQTT_TOPIC1 = "req_config_data";
 char *MQTT_TOPIC2 = "config_data";
 bool tls_flag = false;
 bool timeout_flag = false;
+bool valid_data_1 = false;
 
 #define MQTT_QOS 1
 #define MQTT_RETAIN 0
@@ -231,16 +232,19 @@ void message_callback(struct mosquitto *mosq, void *userdata, const struct mosqu
         cJSON *fw_version_data = cJSON_GetObjectItem(config_data, "fw_version");
         if (fw_version_data != NULL)
         {
+            valid_data_1 = true;
             _fprintfGreen(stdout,"\r\nreceived FW Version: %02x\r\n", fw_version_data->valueint);
         }
         cJSON *serial_no_data = cJSON_GetObjectItem(config_data, "serial_number");
         if (serial_no_data != NULL)
         {
+            valid_data_1 = true;
             _fprintfGreen(stdout,"\r\nreceived Serial No: %s\r\n", serial_no_data->valuestring);
         }
         cJSON *usb_mode_data = cJSON_GetObjectItem(config_data, "usb_mode");
         if (usb_mode_data != NULL)
         {
+            valid_data_1 = true;
             switch (usb_mode_data->valueint)
             {
             case 0:
@@ -270,7 +274,12 @@ void message_callback(struct mosquitto *mosq, void *userdata, const struct mosqu
     else
     {
         //No response received
-        printf("Invalid response received!\n");
+        _fprintfRed(stderr,"Invalid response received!\n");
+    }
+
+    if(valid_data_1 == false)
+    {
+        _fprintfRed(stderr,"Empty response received from Device!\n");
     }
 }
 
@@ -505,6 +514,7 @@ int main(int argc, char *argv[]) {
             // Call function to request configuration data
             //printf("sending payload: %s with size: %lu", payload, strlen(payload));
             mosquitto_publish(mosq, NULL, MQTT_TOPIC1, strlen(payload), payload, MQTT_QOS, MQTT_RETAIN);
+            valid_data_1 = false;
             flag = 0;
             cJSON_Delete(req_config_data);
             //Implement a timeout function
@@ -527,6 +537,7 @@ int main(int argc, char *argv[]) {
             // Call function to request configuration data
             //printf("sending payload: %s with size: %lu", payload, strlen(payload));
             mosquitto_publish(mosq, NULL, MQTT_TOPIC1, strlen(w_payload), w_payload, MQTT_QOS, MQTT_RETAIN);
+            valid_data_1 = false;
             flag = 0;
             cJSON_Delete(req_w_config_data);
             timeout_func();
