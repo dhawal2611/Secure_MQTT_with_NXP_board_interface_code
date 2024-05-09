@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <netinet/in.h>
@@ -47,6 +48,7 @@ bool timeout_flag = false;
 
 #define MQTT_QOS 1
 #define MQTT_RETAIN 0
+#define MAX_IP_LENGTH 16 // Maximum length of an IPv4 address (including null terminator)
 
 char data[1024];
 uint8_t flag = 0;
@@ -151,6 +153,40 @@ bool is_zero_initialized(const char *buffer, size_t size)
         return true;
     }
     return true;
+}
+
+
+char* get_first_ip_address() {
+    FILE* fp;
+    char* command = "hostname -I";
+    char output[1024]; // Buffer to store command output
+    char* ip_address = (char*)malloc(MAX_IP_LENGTH * sizeof(char)); // Allocate memory for IP address
+
+    // Open a pipe to run the command and read its output
+    fp = popen(command, "r");
+    if (fp == NULL) {
+        printf("Failed to execute command\n");
+        exit(1);
+    }
+
+    // Read command output line by line
+    if (fgets(output, sizeof(output), fp) != NULL) {
+        // Tokenize the output by space to extract IP addresses
+        char* token = strtok(output, " ");
+        while (token != NULL) {
+            // Check if the token is a valid IPv4 address
+            if (strlen(token) <= MAX_IP_LENGTH && strchr(token, '.') != NULL) {
+                strncpy(ip_address, token, MAX_IP_LENGTH);
+                break; // Found the first IP address, exit the loop
+            }
+            token = strtok(NULL, " ");
+        }
+    }
+
+    // Close the pipe
+    pclose(fp);
+
+    return ip_address;
 }
 
 uint8_t u8GetIP() {
@@ -369,11 +405,12 @@ int main(int argc, char *argv[]) {
     //Get the MQTT Broker Address and Port
     _fprintfBlue(stdout,"Auto Getting the MQTT Broker Address... \n");
 
-    if(u8GetIP() == -1) 
-    {
-        _fprintfRed(stdout,"Invalid Interface name\n");
-        //return 0;
-    }
+    // if(u8GetIP() == -1) 
+    // {
+    //     _fprintfRed(stdout,"Invalid Interface name\n");
+    //     //return 0;
+    // }
+    strcpy(MQTT_BROKER, get_first_ip_address());
     while(1)
     {
         _fprintfBlue(stdout,"Is this MQTT Broker Address Correct? : %s (y/n)\t", MQTT_BROKER);
