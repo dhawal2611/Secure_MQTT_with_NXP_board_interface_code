@@ -75,7 +75,7 @@
             "label": "Run NXP MQTT Client",
             "type": "shell",
             "detail": "To get the configuration from the RMM Device",
-            "command": "gcc -g ${workspaceFolder}/mqtt_client/mqtt_duplex/mqtt_client1.c -o ${workspaceFolder}/mqtt_client/mqtt_duplex/build/mqtt_client1.out -lmosquitto -lcjson && cd ${workspaceFolder}/mqtt_client/mqtt_duplex/build && ./mqtt_client1.out"
+            "command": "mkdir -p ${workspaceFolder}/mqtt_client/mqtt_duplex/build && gcc -g ${workspaceFolder}/mqtt_client/mqtt_duplex/mqtt_client1.c -o ${workspaceFolder}/mqtt_client/mqtt_duplex/build/mqtt_client1.out -lmosquitto -lcjson && cd ${workspaceFolder}/mqtt_client/mqtt_duplex/build && ./mqtt_client1.out"
 
         }
 
