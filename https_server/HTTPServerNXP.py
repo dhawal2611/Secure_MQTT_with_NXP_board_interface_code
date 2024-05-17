@@ -2,7 +2,12 @@ import json
 import logging
 import re
 import ssl
+import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
+
+
+HTTPS_ENABLED = True
+VERIFY_USER = True
 
 def APIPreProvisionlingPostDetails(self):
     print("Device PreProvisionling command")
@@ -452,12 +457,28 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
 if __name__ == '__main__':
-    server = HTTPServer(('192.168.60.109', 443), HTTPRequestHandler)
+    #ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ##ctx.load_cert_chain(certfile='server.crt', keyfile='server.key')
+    #ctx.load_cert_chain("../mqtt_broker/certs/mqtt-server.crt", "../mqtt_broker/certs/mqtt-server.key")
+    #server = HTTPServer(('192.168.60.109', 443), HTTPRequestHandler)
+    #server.socket = ctx.wrap_socket(server.socket, server_side=True)
+
+    context = None
+    if(HTTPS_ENABLED):
+        ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        
+        if(VERIFY_USER):
+            ctx.verify_mode = ssl.CERT_REQUIRED
+            ctx.load_verify_locations("../mqtt_broker/certs/mosquitto-certificate-authority.crt")
+
+        try:
+            ctx.load_cert_chain("../mqtt_broker/certs/mqtt-server.crt", "../mqtt_broker/certs/mqtt-server.key")
+        except Exception as e:
+            sys.exit("Error starting server: {}".format(e))
     
-    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    #ctx.load_cert_chain(certfile='server.crt', keyfile='server.key')
-    ctx.load_cert_chain("../mqtt_broker/certs/mqtt-server.crt", "../mqtt_broker/certs/mqtt-server.key")
+    server = HTTPServer(('192.168.60.109', 443), HTTPRequestHandler)
     server.socket = ctx.wrap_socket(server.socket, server_side=True)
+
     logging.info('Starting httpd...\n')
     try:
         server.serve_forever()
