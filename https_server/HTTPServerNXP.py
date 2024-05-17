@@ -22,13 +22,14 @@ def APIPreProvisionlingPostDetails(self):
     if RecvData["serviceTag"] == "60Z6Z32":
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
-        self.end_headers()
 
         GroupToken = "isActiveKvM8Eo6GWw9XJcW7zikUJQ==" #Read data dynamically and then store into it.
         data = {
         "groupToken": GroupToken
         }
         DeviceMQTTData = json.dumps(data, indent=4).encode('utf-8')
+        self.send_header('Content-Length', str(len(DeviceMQTTData)))
+        self.end_headers()
         self.wfile.write(DeviceMQTTData)
         self.end_headers()
     else:
@@ -47,7 +48,6 @@ def OpenDeviceGroupLoginPostDetails(self):
     if RecvData["groupToken"] == "defaSample#123":
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
-        self.end_headers()
 
         ID = "null" #Read data dynamically and then store into it.
         CreatedAt = "null"
@@ -62,6 +62,8 @@ def OpenDeviceGroupLoginPostDetails(self):
             "isActive": ActiveState,
         }
         DeviceMQTTData = json.dumps(data, indent=4).encode('utf-8')
+        self.send_header('Content-Length', str(len(DeviceMQTTData)))
+        self.end_headers()
         self.wfile.write(DeviceMQTTData)
         self.end_headers()
     else:
@@ -79,7 +81,6 @@ def OpenDeviceRegisterPostDetails(self):
     if RecvData["groupToken"] == "defaSample#123":
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
-        self.end_headers()
 
         ID = 0 #Read data dynamically and then store into it.
         ActiveState = "true"
@@ -96,6 +97,8 @@ def OpenDeviceRegisterPostDetails(self):
             "isUserAssociated" : UserAss #User to Device association completed successfully.
         }
         DeviceMQTTData = json.dumps(data, indent=4).encode('utf-8')
+        self.send_header('Content-Length', str(len(DeviceMQTTData)))
+        self.end_headers()
         self.wfile.write(DeviceMQTTData)
         self.end_headers()
     else:
@@ -108,7 +111,6 @@ def DeviceGetMQTT(self):
     print("Device Get MQTT command")
     self.send_response(200)
     self.send_header('Content-Type', 'application/json')
-    self.end_headers()
 
     secure_mqtt_url = "tls://sample:8443"
     preferred_mqtt_url = "tcp://sample:1883"
@@ -119,18 +121,19 @@ def DeviceGetMQTT(self):
     "mqttUrl": mqtt_url
     }
     DeviceMQTTData = json.dumps(data, indent=4).encode('utf-8')
-
-    self.wfile.write(DeviceMQTTData)
+    self.send_header('Content-Length', str(len(DeviceMQTTData)))
     self.end_headers()
+    self.wfile.write(DeviceMQTTData)
 
 def DeviceGetKey(self):
     print("Device Get Key command")
     self.send_response(200)
     self.send_header('Content-Type', 'application/json')
-    self.end_headers()
 
     SendKeyData = "+HMHiWrt2QYULCj+VnQ0vb4UgxI1TtTqB9Xa+0bCZRE="
     SendKeyData = SendKeyData.encode('utf-8')
+    self.send_header('Content-Length', str(len(SendKeyData)))
+    self.end_headers()
     self.wfile.write(SendKeyData)
     self.end_headers()
 
@@ -146,7 +149,6 @@ def PostDeviceCheckin(self):
     if RecvData["serialNum"] == "55GMGK3":
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
-        self.end_headers()
 
         null = "null"
         false = "false"
@@ -200,6 +202,8 @@ def PostDeviceCheckin(self):
             "wmsVersion": "4.7.5"
         }
         DeviceMQTTData = json.dumps(data, indent=4).encode('utf-8')
+        self.send_header('Content-Length', str(len(DeviceMQTTData)))
+        self.end_headers()
         self.wfile.write(DeviceMQTTData)
         self.end_headers()
     else:
@@ -217,7 +221,6 @@ def PostWMSFullConfig(self):
 
     self.send_response(200)
     self.send_header('Content-Type', 'application/json')
-    self.end_headers()
 
     null = "null"
     false = "false"
@@ -317,6 +320,8 @@ def PostWMSFullConfig(self):
         "wmsVersion": "4.7.5"
     }
     DeviceMQTTData = json.dumps(data, indent=4).encode('utf-8')
+    self.send_header('Content-Length', str(len(DeviceMQTTData)))
+    self.end_headers()
     self.wfile.write(DeviceMQTTData)
     self.end_headers()
 
@@ -358,7 +363,6 @@ def DeviceGetCommand(self):
     print("Device get Command")
     self.send_response(200)
     self.send_header('Content-Type', 'application/json')
-    self.end_headers()
 
     data = []
     data.append("Hello")
@@ -366,7 +370,8 @@ def DeviceGetCommand(self):
     print(data)
     DeviceGetCommandData = str(data).encode('utf-8')
     print(DeviceGetCommandData)
-
+    self.send_header('Content-Length', str(len(DeviceGetCommandData)))
+    self.end_headers()
     self.wfile.write(DeviceGetCommandData)
     self.end_headers()
 
@@ -374,7 +379,6 @@ def DeviceGetInProgressCommand(self):
     print("Device get In Progress Command")
     self.send_response(200)
     self.send_header('Content-Type', 'application/json')
-    self.end_headers()
 
     data = []
     data.append("Hello")
@@ -382,7 +386,8 @@ def DeviceGetInProgressCommand(self):
     print(data)
     DeviceGetCommandData = str(data).encode('utf-8')
     print(DeviceGetCommandData)
-
+    self.send_header('Content-Length', str(len(DeviceGetCommandData)))
+    self.end_headers()
     self.wfile.write(DeviceGetCommandData)
     self.end_headers()
 
@@ -457,13 +462,13 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
 if __name__ == '__main__':
-    #ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    ##ctx.load_cert_chain(certfile='server.crt', keyfile='server.key')
-    #ctx.load_cert_chain("../mqtt_broker/certs/mqtt-server.crt", "../mqtt_broker/certs/mqtt-server.key")
-    #server = HTTPServer(('192.168.60.109', 443), HTTPRequestHandler)
-    #server.socket = ctx.wrap_socket(server.socket, server_side=True)
+    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    #ctx.load_cert_chain(certfile='server.crt', keyfile='server.key')
+    ctx.load_cert_chain("../mqtt_broker/certs/mqtt-server.crt", "../mqtt_broker/certs/mqtt-server.key")
+    server = HTTPServer(('192.168.60.109', 443), HTTPRequestHandler)
+    server.socket = ctx.wrap_socket(server.socket, server_side=True)
 
-    context = None
+    '''context = None
     if(HTTPS_ENABLED):
         ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         
@@ -477,7 +482,7 @@ if __name__ == '__main__':
             sys.exit("Error starting server: {}".format(e))
     
     server = HTTPServer(('192.168.60.109', 443), HTTPRequestHandler)
-    server.socket = ctx.wrap_socket(server.socket, server_side=True)
+    server.socket = ctx.wrap_socket(server.socket, server_side=True)'''
 
     logging.info('Starting httpd...\n')
     try:
