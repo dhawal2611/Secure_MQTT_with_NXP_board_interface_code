@@ -108,6 +108,7 @@ def OpenDeviceRegisterPostDetails(self):
 
 
 def DeviceGetMQTT(self):
+    print(self.headers)
     print("Device Get MQTT command")
     self.send_response(200)
     self.send_header('Content-Type', 'application/json')
@@ -465,7 +466,7 @@ if __name__ == '__main__':
     ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     #ctx.load_cert_chain(certfile='server.crt', keyfile='server.key')
     ctx.load_cert_chain("../mqtt_broker/certs/mqtt-server.crt", "../mqtt_broker/certs/mqtt-server.key")
-    server = HTTPServer(('192.168.60.109', 443), HTTPRequestHandler)
+    server = HTTPServer(('0.0.0.0', 443), HTTPRequestHandler)
     server.socket = ctx.wrap_socket(server.socket, server_side=True)
 
     '''context = None
